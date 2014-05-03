@@ -44,39 +44,40 @@ class TicTacToeBoard:
         return 'N'
 
 
-def score(board, cpuMove, humanMove):
-    if board.winner() == cpuMove:
-        return 10
-    elif board.winner() == humanMove:
-        return -10
-    else:
-        return 0
-
-def MinMax(board, cpuMove, humanMove, toggle=0):
-    if (board.full_board()):
-        return tuple([score(board, cpuMove, humanMove)])
+def MinMax(board, cpuMove, humanMove, toggle=0, count=0):
+    if board.winner()==cpuMove:
+        return (1,None)
+    elif board.winner()==humanMove:
+        return (-1,None)
+    elif board.full_board() and board.winner() == 'N':
+        return (0,None)
+        
     elif toggle == 0:
-        best_move = (-20,None)
+        best_move = (-2,None)
         for i in range(len(board.board)):
             for j in range(len(board.board[0])):
                 if board.get_square(i,j)=='N':
                     board.play_square(i,j,cpuMove)
-                    move = MinMax(board,cpuMove,humanMove,1)
+                    move = MinMax(board,cpuMove,humanMove,1,count+1)
+                    if count == 0:
+                        print "max : ", move, "count :",count
+                    board.play_square(i,j,'N')
                     if move[0] > best_move[0] :
                         best_move = (move[0],i,j)
-                    board.play_square(i,j,'N')
         return best_move
 
-    elif toggle == 1:
-        best_move = (20,None)
+    else:
+        best_move = (2,None)
         for i in range(len(board.board)):
             for j in range(len(board.board[0])):
                 if board.get_square(i,j)=='N':
                     board.play_square(i,j,humanMove)
-                    move = MinMax(board,cpuMove,humanMove,0)
+                    move = MinMax(board,cpuMove,humanMove,0,count+1)
+                    if count == 0:
+                        print "min :", move, "count :", count
+                    board.play_square(i,j,'N')
                     if move[0] < best_move[0] :
                         best_move = (move[0],i,j)
-                    board.play_square(i,j,'N')
         return best_move
 
 def make_simple_cpu_move(board, cpuval):
